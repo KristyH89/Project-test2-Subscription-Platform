@@ -8,7 +8,9 @@ import lombok.*;
 import se.lexicon.subscriptionapi.domain.constant.Role;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -41,7 +43,7 @@ public class Customer {
 
     @Column(nullable = false)
     @NotBlank(message = "Password is required")
-    @Size(min = 6)
+    @Size(min = 6, max = 30)
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -62,4 +64,6 @@ public class Customer {
         createdAt = LocalDateTime.now();
     }
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Subscription> subscriptions = new ArrayList<>();
 }
