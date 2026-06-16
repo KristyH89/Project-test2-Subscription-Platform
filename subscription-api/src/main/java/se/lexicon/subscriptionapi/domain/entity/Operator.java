@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,5 +32,8 @@ public class Operator {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "operator", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Plan> plans = new ArrayList<>();
 
 }
