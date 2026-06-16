@@ -37,7 +37,7 @@ public class PlanServiceImpl implements PlanService {
                         "Operator not found with id: " + request.operatorId()));
 
         // Prevent duplicate plan names for the same operator
-        if (planRepository.existsByNameAndOperatorId(request.name(), request.operatorId()) {
+        if (planRepository.existsByNameAndOperatorId(request.name(), request.operatorId())) {
             throw new BusinessRuleException(
                     "Plan with name '" + request.name() + "' already exists for this operator");
         }

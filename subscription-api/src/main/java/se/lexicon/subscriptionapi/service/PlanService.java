@@ -18,7 +18,7 @@ public interface PlanService {
         PlanResponse findById(Long id);
 
     // CUSTOMER
-    List<PlanResponse> findALLActive();
+    List<PlanResponse> findAllActive();
     List<PlanResponse> findActiveByServiceType(ServiceType serviceType);
     List<PlanResponse> findByOperatorId(Long operatorId);
 
