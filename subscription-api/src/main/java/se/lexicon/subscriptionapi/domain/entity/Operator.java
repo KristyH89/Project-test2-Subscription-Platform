@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString
 @Entity
 @Table(name = "operators")
@@ -34,6 +35,7 @@ public class Operator {
     }
 
     @OneToMany(mappedBy = "operator", cascade = CascadeType.ALL, orphanRemoval = false)
+    @Builder.Default
     private List<Plan> plans = new ArrayList<>();
 
 }

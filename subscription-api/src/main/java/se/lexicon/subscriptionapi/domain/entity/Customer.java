@@ -43,7 +43,7 @@ public class Customer {
 
     @Column(nullable = false)
     @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 30)
+    @Size(min = 6, max = 100)
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
