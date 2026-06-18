@@ -1,233 +1,277 @@
-![Lexicon Logo](https://lexicongruppen.se/media/wi5hphtd/lexicon-logo.svg)
+# 📦 Subscription API — Telecom Subscription Management System
 
-# ProjectTest – Subscription Platform
+## 📑 Table of Contents
 
-**Project Type:** Backend REST API (Spring Boot + JPA)
+- [Overview](#-overview)
+- [Project instructions](#-project-instructions)
+- [API Documentation](#-api-documentation-swagger)
+- [Project Structure](#-project-structure)
+- [Features](#-features)
+- [Seed Data](#-seed-data)
+- [Authentication](#-authentication-flow)
+- [Roles](#-roles)
+- [Endpoints](#-endpoints-overview)
+- [Business Rules](#-business-rules)
+- [How to Run](#-how-to-run)
+- [Project Status](#-project-status)
+- [Tech Stack](#-tech-stack)
 
-## Overview
+  
+A Spring Boot–based backend application for managing telecom operators, subscription plans, customers, and subscriptions.
+The system uses JWT authentication, role‑based authorization, DTO mapping, validation, and clean service‑layer architecture.
 
-You will extend and complete an existing backend project for a **Subscription Management Platform**.  
-The system allows service providers to offer subscription plans, while customers can browse plans and manage their
-subscriptions.
-
-Your implementation must follow the functional and technical requirements described below.
-
----
-
-## Scenario
-
-You are building a backend for a **subscription management platform** used by multiple service providers (**operators**).
-
-Operators offer subscription plans in two categories:
-
-### Internet Services
-
-- Fiber 50
-- Fiber 100
-- Fiber 300
-
-### Mobile Services
-
-- Mobile Basic
-- Mobile Plus
-- Mobile Unlimited
-
-Each operator maintains its own catalog of plans.
-
-Each plan contains:
-
-- Name
-- Price
-- Service type (Internet or Mobile)
-- Optional data limit
-- Active/Inactive status
-
-Customers can:
-
-- Register and manage their profile
-- Browse operators and active plans
-- Subscribe to plans
-- Change plans
-- Cancel subscriptions
+This project was built as part of a backend workshop and demonstrates professional API design with full Swagger documentation.
 
 ---
 
-## Business Rules
 
-- A customer may have **at most one active subscription per service type**:
-    - One Internet subscription
-    - One Mobile subscription
+## 📘 Project Instructions
 
-- A subscription is created with status **ACTIVE**
-- Cancelled subscriptions must store a cancellation date
-- Only **active plans** are visible and subscribable
-- Plan changes are allowed **only within the same operator and same service type**
-
-Violations of these rules must result in meaningful custom exceptions.
+👉 [View project instructions](README.md)
 
 ---
 
-## Actors
+## 📘 API Documentation (Swagger)
+Once the application is running, open:
+`http://localhost:8080/swagger-ui/index.html`
 
-| Actor        | Responsibilities                          |
-|--------------|-------------------------------------------|
-| **Admin**    | Create and manage operators and plans     |
-| **Customer** | Browse plans and manage own subscriptions |
+Use the Authorize button and enter:
+`Bearer <your_access_token> `
 
----
-
-### Domain Analysis
-
-```mermaid
-erDiagram
-    CUSTOMER ||--o{ SUBSCRIPTION: has
-    PLAN ||--o{ SUBSCRIPTION: used_by
-    OPERATOR ||--o{ PLAN: offers
-    CUSTOMER ||--|| CUSTOMER_DETAIL: has
 ```
-## Entity Requirements
-
-- Define JPA relationships and ownership
-- Add required fields to `Plan` and `Subscription`
-- Use enums where applicable (service type, subscription status)
-- Enable auditing (`createdAt`, `updatedAt`)
-- Add constraints (unique, not null, length, etc.)
-
+se.lexicon.subscriptionapi
+│
+├── config/                 # Seed data, OpenAPI config
+├── controller/             # REST controllers (Auth, Customer, Plan, Operator, Subscription)
+├── domain/
+│   ├── entity/             # JPA entities
+│   └── enums/              # ServiceType, Roles, etc.
+│
+├── dto/
+│   ├── request/            # Incoming request DTOs
+│   └── response/           # Outgoing response DTOs
+│
+├── repository/             # Spring Data JPA repositories
+├── security/               # JWT provider, filters, blacklist
+├── service/                # Service interfaces
+│   └── impl/               # Service implementations
+│
+└── SubscriptionApiApplication.java
+```
 ---
 
-## Service Layer
+# ⚙️ Features
 
-- Implement services for all domain operations
-- Use `@Transactional` on write operations
-- Enforce business rules inside services
-- Throw custom exceptions for invalid operations
+### 🔐 Authentication & Authorization
+- JWT login & logout
+- Token blacklist on logout
+- Role‑based access (USER / ADMIN)
+- Public registration endpoint
 
----
+### 🏢 Operator Management
+- Create operator (ADMIN)
+- Search by name
+- Get all operators
 
-## DTOs, Mapping & Validation
+### 📦 Plan Management
+- Create, update, delete plans (ADMIN)
+- Get active plans
+- Filter by service type
+- Get plans by operator
 
-- Use DTOs (records recommended)
-- Do **not** expose entities in controllers
-- Use validation annotations (`@NotNull`, `@NotBlank`, etc.)
-- Convert between Entity and DTO using MapStruct or manual mappers
-
----
-
-## REST API & Security
-
-- Controllers for **Plan** and **Subscription**
-- Role-based access:
-  - ADMIN → manage operators & plans
-  - CUSTOMER → manage own subscriptions
-- Return correct HTTP status codes
-- Global exception handling
-- (Optional) Swagger annotations
-
-### Required API Functionality
-
-Expose endpoints that support the following operations.
-
-#### Plan API
-
-**ADMIN must be able to:**
-- Create a plan
-- Update a plan
-- Delete a plan
-- View all plans (active and inactive)
-
-**CUSTOMER must be able to:**
-- View all active plans
-- View active plans by service type (Internet / Mobile)
-- View plans belonging to a specific operator
-
----
-
-#### Subscription API
-
-**CUSTOMER must be able to:**
-- Subscribe to a plan
-- View their own subscriptions
-- Change subscription plan
+### 📄 Subscription Management
+- Create subscription
 - Cancel subscription
+- Change plan (same operator + same service type)
+- View subscriptions per customer
+- Admin: view/delete all subscriptions
 
-The API must enforce the business rules defined in this document (for example: one active subscription per service type).
-
----
-
-
-## Seed Data
-
-Initialize:
-
-- At least 2 operators
-- Multiple plans per operator
-- Both active and inactive plans
+### 👤 Customer Management
+- Register customer
+- Update profile
+- Get customer by ID or email
+- Admin: list all customers
 
 ---
+## 🌱 Seed Data
+On startup, the application seeds:
 
-## (Optional) Testing
+### Operators
+| ID | Name |
+| --- | --- |
+| 1 | FiberNet |
+| 2 | MobilePlus |
 
-- Unit tests for repositories
-- Unit tests for services
-- Controller tests
+### FiberNet Plans
+| Name | Price (SEK) | Type | Active |
+| --- | --- | --- | --- |
+| Fiber 50 | 299.99 | INTERNET | true |
+| Fiber 100 | 399.99 | INTERNET | true |
+| Fiber 300 | 599.99 | INTERNET | false |
 
----
-
-## ✅ Submission Checklist
-
-- GitHub repository link
-- `pom.xml` contains required dependencies
-- Entities and relationships implemented
-- Services, transactions, and exceptions
-- DTOs and validation
-- Swagger UI accessible
-- README with run instructions
-- Seed data included
-
----
-
-## Technical Stack & Requirements
-
-* **Java 25**
-* **Spring Boot 4.x**
-* **Spring Data JPA** (Hibernate)
-* **Spring Security** (JWT Authentication)
-* **MySQL 8.0** (Database)
-* **Redis** (Token Blacklisting)
-* **MapStruct** (Object Mapping)
-* **Lombok** (Boilerplate reduction)
-* **Swagger/OpenAPI 3** (API Documentation)
-* **Maven** (Build Tool)
-* **Docker & Docker Compose** (Infrastructure)
-
-### Prerequisites
-
-Before running the application, ensure you have the following installed:
-
-* [JDK 25](https://www.oracle.com/java/technologies/downloads/)
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+### MobilePlus Plans
+| Name | Price (SEK) | Type | Data Limit | Active |
+| --- | --- | --- | --- | --- |
+| Mobile Basic | 149.99 | MOBILE | 5000 MB | true |
+| Mobile Plus | 249.99 | MOBILE | 15000 MB | true |
+| Mobile Unlimited | 349.99 | MOBILE | unlimited | false |
 
 ---
+## 🔐 Authentication Flow
+### Login
 
-## Getting Started
+`POST /api/v1/auth/login`
 
-### 1. Infrastructure Setup (Database & Redis)
+Request:
 
-The project uses Docker Compose to manage the MySQL database and Redis server.
-
-Make sure **Docker Desktop is running**, then open a terminal in the **project root directory** (where `docker-compose.yml` is located) and run:
-
-```bash
-docker-compose up -d
+```
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
 ```
 
-### 2. Run the Application
+Resonse:
+```
+{
+  "accessToken": "eyJhbGciOiJIUzUxMiJ9...",
+  "tokenType": "Bearer"
+}
+```
 
-Navigate to the `subscription-api` directory and run `SubscriptionApiApplication.java`
+Register:
+`POST /api/v1/auth/register`
 
+Logout:
+`POST /api/v1/auth/logout`
+→ Token is blacklisted until expiration.
 
-### 3. API Documentation
+--- 
 
-Once the app is running, access the Swagger UI at:
-`http://localhost:8080/swagger-ui.html`
+## 🧑‍💼 Roles
+### USER
+- View active plans
+- Subscribe / cancel / change plan
+- View own subscriptions
+- View plans by operator
+
+### ADMIN
+- Everything USER can do, plus:
+- Manage operators
+- Manage plans
+- View all customers
+- View/delete all subscriptions
+
+---
+
+## 📚 Endpoints Overview
+
+### 🔑 Auth
+| Method | Endpoint | Role |
+| --- | --- | --- |
+| POST | /auth/login | Public |
+| POST | /auth/register | Public |
+| POST | /auth/logout | USER/ADMIN |
+
+### 👤 Customers
+| Method | Endpoint | Role |
+| --- | --- | --- |
+| POST | /customers | Public |
+| GET | /customers/{id} | USER/ADMIN |
+| GET | /customers/email/{email} | USER/ADMIN |
+| GET | /customers | USER/ADMIN |
+| PUT | /customers/{id}/profile | USER/ADMIN |
+
+### 🏢 Operators
+
+| Method | Endpoint | Role |
+| --- | --- | --- |
+| POST | /operators | ADMIN |
+| GET | /operators/{id} | USER/ADMIN |
+| GET | /operators/search?name= | USER/ADMIN |
+| GET | /operators | USER/ADMIN |
+
+### 📦 Plans
+| Method | Endpoint | Role |
+| --- | --- | --- |
+| POST | /plans | ADMIN |
+| PUT | /plans/{id} | ADMIN |
+| DELETE | /plans/{id} | ADMIN |
+| GET | /plans | ADMIN |
+| GET | /plans/{id} | USER/ADMIN |
+| GET | /plans/active | USER/ADMIN |
+| GET | /plans/active/type | USER/ADMIN |
+| GET | /plans/operator/{operatorId} | USER/ADMIN |
+
+### 📄 Subscriptions
+| Method | Endpoint | Role |
+| --- | --- | --- |
+| POST | /subscriptions | USER/ADMIN |
+| GET | /subscriptions/{id} | USER/ADMIN |
+| GET | /subscriptions/customer/{customerId} | USER/ADMIN |
+| GET | /subscriptions | ADMIN |
+| DELETE | /subscriptions/{id} | ADMIN |
+| PUT | /subscriptions/{id}/cancel | USER/ADMIN |
+| PUT | /subscriptions/{id}/change-plan/{newPlanId} | USER/ADMIN |
+
+---
+## ⚙️ Business Rules
+### Subscription Creation
+- Cannot subscribe twice to the same service type
+- Only active plans can be subscribed to
+- Customer must exist
+- Plan must exist
+
+### Plan Change
+- Must be same operator
+- Must be same service type
+- Old subscription becomes inactive
+
+### Cancellation
+- Marks subscription as cancelled
+- Admin can delete subscriptions
+
+---
+
+## ▶️ How to Run
+
+### 1. Clone the repository
+`git clone <your-repo-url> `
+
+### 2. Configure MySQL
+Create database:  
+`subscription_api `
+
+Set credentials in application.properties.
+
+### 3. Run the application
+`mvn spring-boot:run`
+
+### 4. Open Swagger
+`http://localhost:8080/swagger-ui/index.html`
+
+---
+
+## 🎉 Project Status
+✔ Fully functional  
+✔ All endpoints implemented  
+✔ JWT security working  
+✔ Seed data included  
+✔ Swagger documented  
+✔ Ready for submission  
+
+---
+
+## 🧰 Tech Stack
+
+![Java](https://img.shields.io/badge/Java-17-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-JWT%20Auth-orange)
+![Hibernate](https://img.shields.io/badge/Hibernate-JPA-red)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![Lombok](https://img.shields.io/badge/Lombok-Enabled-green)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI%203.0-lightgrey)
+![Maven](https://img.shields.io/badge/Maven-Build%20Tool-C71A36)
+![JWT](https://img.shields.io/badge/JWT-Token%20Auth-purple)
+
 
