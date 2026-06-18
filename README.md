@@ -16,7 +16,8 @@
 - [Project Status](#-project-status)
 - [Tech Stack](#-tech-stack)
 
-  
+
+## Overview
 A Spring Boot–based backend application for managing telecom operators, subscription plans, customers, and subscriptions.
 The system uses JWT authentication, role‑based authorization, DTO mapping, validation, and clean service‑layer architecture.
 
