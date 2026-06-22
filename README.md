@@ -280,7 +280,7 @@ Everything USER can do, plus:
 ### 1. Clone the repository
 
 ```
-git clone <your-repo-url>
+git clone https://github.com/KristyH89/Project-test2-Subscription-Platform
 ```
 
 ### 2. Start infrastructure (MySQL + Redis)
